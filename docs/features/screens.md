@@ -26,6 +26,8 @@ Verified against the actual routes registered in [routes.tsx](../../src/app/rout
 - [x] **Edit Company** — `/provider/companies/:id/edit` — Related: UC-010 — Edit an existing company (reuses Create Company screen) — Action: submit changes
 - [x] **Services (list)** — `/provider/companies/:id/services` — Related: UC-013 — View services offered by a company — Action: create a service
 - [x] **Create Service** — `/provider/companies/:id/services/create` — Related: UC-014 — Add a new service/offering — Action: submit service details
+- [x] **Edit Service** — `/provider/companies/:id/services/:serviceId/edit` — Related: UC-015 — Edit an existing service (reuses Create Service screen, prefilled) — Action: submit changes
+- [x] **Delete Service (confirmation)** — inline on Services list — Related: UC-016 — Remove a service — Action: confirm deletion
 - [x] **Provider Appointments (list)** — `/provider/appointments` — Related: UC-030 — View all appointments for the provider — Action: open an appointment
 - [x] **Provider Appointment Detail** — `/provider/appointments/:id` — Related: UC-030b, UC-031 — View/manage a single appointment — Action: accept/confirm/reject
 - [x] **Calendar** — `/provider/calendar` — Related: UC-017 — Visualize schedule — Action: navigate to Hours/Block Time
@@ -55,17 +57,15 @@ Verified against the actual routes registered in [routes.tsx](../../src/app/rout
 - [ ] **Payment Methods** — Related: UC-036 — Add/view saved payment methods
 - [ ] **Payment History** — Related: UC-035 — View past payments and refunds
 - [ ] **Delete Company confirmation** — Related: UC-011 — No API yet; needs a decision on whether to implement or restrict
-- [ ] **Edit Service** — Related: UC-015 — No dedicated edit screen; only create exists
-- [ ] **Delete Service** — Related: UC-016 — No screen/action implemented
 - [ ] **Google Login** — Related: UC-003 — No social-auth entry point implemented
 
 ## Status summary
 
 | Status                 | Count |
 | ---------------------- | ----- |
-| ✅ Completed           | 21    |
+| ✅ Completed           | 23    |
 | ⚠️ Partially completed | 2     |
-| ⬜ Pending             | 15    |
+| ⬜ Pending             | 13    |
 
 ## Consistency check: Use Cases ↔ Screens ↔ Navigation
 
@@ -73,4 +73,5 @@ Verified against the actual routes registered in [routes.tsx](../../src/app/rout
 - The previously orphaned Role Switch Landing screen/route (UC-005b) was removed from the codebase on 2026-09-12, since nothing navigated to it and it had no clear owner.
 - Every "Pending" item corresponds to a `[NOT IMPLEMENTED]` use case in use-cases.md — no pending screens were invented without a backing use case.
 - `Dashboard.tsx` was resolved on 2026-09-12: it is now the `/provider` index screen (UC-005e), and `BusinessHome.tsx` was repurposed from a single hardcoded company into the per-business detail screen at `/provider/companies/:id` (UC-005f).
+- UC-015/016 (Edit/Delete Service) were resolved on 2026-09-12: Edit reuses `CreateService.tsx` prefilled via `:serviceId`, and Delete is an inline confirmation on the Services list. Both are frontend-only (no persistence — a page refresh restores the deleted service) since there's no backing API yet.
 - The `Clients` and `Reviews` placeholder routes have no dedicated use cases yet; if real Clients/Reviews features are planned, add use cases for them before building dedicated screens.

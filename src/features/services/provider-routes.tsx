@@ -10,4 +10,5 @@ const ProviderServices = lazy(() =>
 export const servicesProviderRoutes: RouteObject[] = [
   { path: 'companies/:id/services', Component: ProviderServices },
   { path: 'companies/:id/services/create', Component: CreateService },
+  { path: 'companies/:id/services/:serviceId/edit', Component: CreateService },
 ]

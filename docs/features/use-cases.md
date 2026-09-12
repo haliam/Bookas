@@ -39,26 +39,27 @@ Extra:
 
 Provider (wrapped in [ProviderLayout.tsx](../../src/app/layouts/ProviderLayout.tsx)):
 
-| Screen                | Route                                     | Component                                                                                              |
-| --------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Dashboard             | `/provider`                               | [Dashboard.tsx](../../src/features/business-home/screens/Dashboard.tsx)                                |
-| Business Home         | `/provider/companies/:id`                 | [BusinessHome.tsx](../../src/features/business-home/screens/BusinessHome.tsx)                          |
-| Companies             | `/provider/companies`                     | [Companies.tsx](../../src/features/companies/screens/Companies.tsx)                                    |
-| Create Company        | `/provider/companies/create`              | [CreateCompany.tsx](../../src/features/companies/screens/CreateCompany.tsx)                            |
-| Edit Company          | `/provider/companies/:id/edit`            | [CreateCompany.tsx](../../src/features/companies/screens/CreateCompany.tsx)                            |
-| Services              | `/provider/companies/:id/services`        | [Services.tsx](../../src/features/services/screens/Services.tsx)                                       |
-| Create Service        | `/provider/companies/:id/services/create` | [CreateService.tsx](../../src/features/services/screens/CreateService.tsx)                             |
-| Clients (placeholder) | `/provider/clients`                       | [Companies.tsx](../../src/features/companies/screens/Companies.tsx)                                    |
-| Appointments          | `/provider/appointments`                  | [ProviderAppointments.tsx](../../src/features/appointments/screens/ProviderAppointments.tsx)           |
-| Appointment Detail    | `/provider/appointments/:id`              | [ProviderAppointmentDetail.tsx](../../src/features/appointments/screens/ProviderAppointmentDetail.tsx) |
-| Calendar              | `/provider/calendar`                      | [Calendar.tsx](../../src/features/scheduling/screens/Calendar.tsx)                                     |
-| Hours                 | `/provider/hours`                         | [Hours.tsx](../../src/features/scheduling/screens/Hours.tsx)                                           |
-| Block Time            | `/provider/block-time`                    | [BlockTime.tsx](../../src/features/scheduling/screens/BlockTime.tsx)                                   |
-| Notifications         | `/provider/notifications`                 | [Notifications.tsx](../../src/features/notifications/screens/Notifications.tsx)                        |
-| Profile               | `/provider/profile`                       | [ProviderProfile.tsx](../../src/features/settings-profile/screens/ProviderProfile.tsx)                 |
-| Settings              | `/provider/settings`                      | [ProviderSettings.tsx](../../src/features/settings-profile/screens/ProviderSettings.tsx)               |
-| Reports               | `/provider/reports`                       | [Reports.tsx](../../src/features/reports/screens/Reports.tsx)                                          |
-| Reviews (placeholder) | `/provider/reviews`                       | [Reports.tsx](../../src/features/reports/screens/Reports.tsx)                                          |
+| Screen                | Route                                              | Component                                                                                              |
+| --------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Dashboard             | `/provider`                                        | [Dashboard.tsx](../../src/features/business-home/screens/Dashboard.tsx)                                |
+| Business Home         | `/provider/companies/:id`                          | [BusinessHome.tsx](../../src/features/business-home/screens/BusinessHome.tsx)                          |
+| Companies             | `/provider/companies`                              | [Companies.tsx](../../src/features/companies/screens/Companies.tsx)                                    |
+| Create Company        | `/provider/companies/create`                       | [CreateCompany.tsx](../../src/features/companies/screens/CreateCompany.tsx)                            |
+| Edit Company          | `/provider/companies/:id/edit`                     | [CreateCompany.tsx](../../src/features/companies/screens/CreateCompany.tsx)                            |
+| Services              | `/provider/companies/:id/services`                 | [Services.tsx](../../src/features/services/screens/Services.tsx)                                       |
+| Create Service        | `/provider/companies/:id/services/create`          | [CreateService.tsx](../../src/features/services/screens/CreateService.tsx)                             |
+| Edit Service          | `/provider/companies/:id/services/:serviceId/edit` | [CreateService.tsx](../../src/features/services/screens/CreateService.tsx)                             |
+| Clients (placeholder) | `/provider/clients`                                | [Companies.tsx](../../src/features/companies/screens/Companies.tsx)                                    |
+| Appointments          | `/provider/appointments`                           | [ProviderAppointments.tsx](../../src/features/appointments/screens/ProviderAppointments.tsx)           |
+| Appointment Detail    | `/provider/appointments/:id`                       | [ProviderAppointmentDetail.tsx](../../src/features/appointments/screens/ProviderAppointmentDetail.tsx) |
+| Calendar              | `/provider/calendar`                               | [Calendar.tsx](../../src/features/scheduling/screens/Calendar.tsx)                                     |
+| Hours                 | `/provider/hours`                                  | [Hours.tsx](../../src/features/scheduling/screens/Hours.tsx)                                           |
+| Block Time            | `/provider/block-time`                             | [BlockTime.tsx](../../src/features/scheduling/screens/BlockTime.tsx)                                   |
+| Notifications         | `/provider/notifications`                          | [Notifications.tsx](../../src/features/notifications/screens/Notifications.tsx)                        |
+| Profile               | `/provider/profile`                                | [ProviderProfile.tsx](../../src/features/settings-profile/screens/ProviderProfile.tsx)                 |
+| Settings              | `/provider/settings`                               | [ProviderSettings.tsx](../../src/features/settings-profile/screens/ProviderSettings.tsx)               |
+| Reports               | `/provider/reports`                                | [Reports.tsx](../../src/features/reports/screens/Reports.tsx)                                          |
+| Reviews (placeholder) | `/provider/reviews`                                | [Reports.tsx](../../src/features/reports/screens/Reports.tsx)                                          |
 
 `Dashboard.tsx` (`ProviderDashboard`) was previously unrouted; it is now the `/provider` index screen (2026-09-12), showing a provider-wide overview across all of that provider's businesses. `BusinessHome.tsx` was repurposed from a single hardcoded business into a per-business detail screen, addressed by `:id` and reached from the Dashboard's "Tus negocios" list or from the Companies list.
 
@@ -93,8 +94,8 @@ Not yet implemented: customer-facing screens (company/service search, available 
 
 - UC-013: View Services → `/provider/companies/:id/services` → API UC-22 (`GET /api/v1/companies/{companyId}/services`)
 - UC-014: Create Service → `/provider/companies/:id/services/create` → API UC-21 (`POST /api/v1/companies/{companyId}/services`)
-- UC-015: Edit Service → [NOT IMPLEMENTED] (no dedicated edit route yet) → API UC-23 (`PUT /api/v1/companies/{companyId}/services/{serviceId}`)
-- UC-016: Delete Service → [NOT IMPLEMENTED] → API UC-24 (`DELETE /api/v1/companies/{companyId}/services/{serviceId}`)
+- UC-015: Edit Service → `/provider/companies/:id/services/:serviceId/edit` (reuses `CreateService.tsx`, prefilled) → API UC-23 (`PUT /api/v1/companies/{companyId}/services/{serviceId}`)
+- UC-016: Delete Service → confirmation panel on the Services list (`Services.tsx`) → API UC-24 (`DELETE /api/v1/companies/{companyId}/services/{serviceId}`)
 
 ## 5. Calendar (Frontend-first; limited API support)
 
@@ -205,6 +206,8 @@ flowchart TD
     BusinessHome --> Reviews["/provider/reviews (placeholder)"]
 
     Services --> CreateService["/provider/companies/:id/services/create"]
+    Services -->|"edit"| EditService["/provider/companies/:id/services/:serviceId/edit"]
+    Services -.->|"delete, confirm inline"| Services
 
     Calendar --> Hours["/provider/hours"]
     Calendar --> BlockTime["/provider/block-time"]
@@ -267,6 +270,7 @@ flowchart TD
 
         BusinessHome -->|"open services"| Services["Services list\n(UC-013)"]
         Services -->|"add a service"| CreateService["Create Service\n(UC-014)"]
+        Services -->|"edit / delete a service"| EditService["Edit Service\n(UC-015) / Delete confirm\n(UC-016)"]
 
         BusinessHome -->|"check schedule"| Calendar["Calendar\n(UC-017)"]
         Calendar -->|"set availability"| Hours["Working Hours\n(UC-018)"]
@@ -325,22 +329,21 @@ Key points shown in this journey:
 
 Walking `Use Case → Required Screen(s) → User Action → Navigation → Next Use Case` for each area:
 
-| Use case                                                   | Screen(s)                      | Consistent with navigation flow?                                                                                                                    |
-| ---------------------------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| UC-001 Register                                            | Register                       | ✅ Yes — leads to UC-005c                                                                                                                           |
-| UC-002 Login                                               | Login                          | ✅ Yes — leads to UC-005e (Dashboard)                                                                                                               |
-| UC-004 Password Recovery                                   | Forgot Password                | ✅ Yes — loops back to Login                                                                                                                        |
-| UC-005c Provider Onboarding                                | Provider Onboarding            | ✅ Yes — leads to UC-008                                                                                                                            |
-| UC-005e/005f Dashboard / Business Home                     | Dashboard / Business Home      | ✅ Yes — Dashboard lists businesses, each leads into its own Business Home                                                                          |
-| UC-008/009/010 Company management                          | Create/List/Edit Company       | ✅ Yes                                                                                                                                              |
-| UC-013/014 Services                                        | Services list / Create Service | ✅ Yes                                                                                                                                              |
-| UC-015/016 Edit/Delete Service                             | —                              | ⚠️ **Partial** — use case is documented, no screen exists, so it cannot appear in the navigation flow                                               |
-| UC-017–020 Calendar/Hours/Block Time                       | Calendar / Hours / Block Time  | ✅ Yes                                                                                                                                              |
-| UC-030/030b/031 Provider appointments                      | Appointments list / Detail     | ✅ Yes                                                                                                                                              |
-| UC-037 Notifications                                       | Notifications                  | ✅ Yes                                                                                                                                              |
-| UC-038/039 Settings                                        | Settings                       | ✅ Yes                                                                                                                                              |
-| UC-040/041 Reports                                         | Reports                        | ✅ Yes                                                                                                                                              |
-| UC-012, UC-021–UC-029, UC-032–UC-036 (customer + payments) | none                           | ⚠️ **Pending** — consistently marked `[NOT IMPLEMENTED]` across use-cases.md, screens.md and this diagram (dashed) — no inconsistency, just unbuilt |
-| `Clients` / `Reviews` placeholder routes                   | render Companies / Reports     | ⚠️ **Partial** — reachable in navigation (via Business Home) but have no dedicated use case of their own                                            |
+| Use case                                                   | Screen(s)                           | Consistent with navigation flow?                                                                                                                    |
+| ---------------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UC-001 Register                                            | Register                            | ✅ Yes — leads to UC-005c                                                                                                                           |
+| UC-002 Login                                               | Login                               | ✅ Yes — leads to UC-005e (Dashboard)                                                                                                               |
+| UC-004 Password Recovery                                   | Forgot Password                     | ✅ Yes — loops back to Login                                                                                                                        |
+| UC-005c Provider Onboarding                                | Provider Onboarding                 | ✅ Yes — leads to UC-008                                                                                                                            |
+| UC-005e/005f Dashboard / Business Home                     | Dashboard / Business Home           | ✅ Yes — Dashboard lists businesses, each leads into its own Business Home                                                                          |
+| UC-008/009/010 Company management                          | Create/List/Edit Company            | ✅ Yes                                                                                                                                              |
+| UC-013/014/015/016 Services CRUD                           | Services list / Create-Edit Service | ✅ Yes — Edit reuses `CreateService.tsx` prefilled by `:serviceId`; Delete is an inline confirmation on the Services list                           |
+| UC-017–020 Calendar/Hours/Block Time                       | Calendar / Hours / Block Time       | ✅ Yes                                                                                                                                              |
+| UC-030/030b/031 Provider appointments                      | Appointments list / Detail          | ✅ Yes                                                                                                                                              |
+| UC-037 Notifications                                       | Notifications                       | ✅ Yes                                                                                                                                              |
+| UC-038/039 Settings                                        | Settings                            | ✅ Yes                                                                                                                                              |
+| UC-040/041 Reports                                         | Reports                             | ✅ Yes                                                                                                                                              |
+| UC-012, UC-021–UC-029, UC-032–UC-036 (customer + payments) | none                                | ⚠️ **Pending** — consistently marked `[NOT IMPLEMENTED]` across use-cases.md, screens.md and this diagram (dashed) — no inconsistency, just unbuilt |
+| `Clients` / `Reviews` placeholder routes                   | render Companies / Reports          | ⚠️ **Partial** — reachable in navigation (via Business Home) but have no dedicated use case of their own                                            |
 
 **Overall**: the three artifacts are consistent for everything that is actually built — every implemented screen maps to a use case and a reachable navigation step, and every pending use case is consistently marked as not implemented in all three places. `Dashboard.tsx` was resolved on 2026-09-12: it's now the `/provider` index (UC-005e), and `BusinessHome.tsx` was repurposed into the per-business detail screen (UC-005f) instead of hardcoding a single company. The remaining exception is `Clients`/`Reviews` (reachable but use-case-less placeholders). `/role-switch` was removed on 2026-09-12 since it was unreachable and had no clear owner.

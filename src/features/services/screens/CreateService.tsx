@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import { TopBar } from '../../../shared/components/navigation/TopBar'
 import { Input } from '../../../shared/components/ui/Input'
 import { Button } from '../../../shared/components/ui/Button'
+import { SERVICES } from '../../../app/data/mockData'
 
 const CATEGORIES = [
   'Masaje',
@@ -20,13 +21,19 @@ const DURATIONS = [15, 30, 45, 60, 75, 90, 120]
 
 export function CreateService() {
   const navigate = useNavigate()
+  const { serviceId } = useParams<{ serviceId: string }>()
+  const existingService = serviceId
+    ? SERVICES.find((s) => s.id === serviceId)
+    : undefined
+  const isEditing = Boolean(existingService)
+
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({
-    name: '',
-    category: '',
-    duration: 60,
-    price: '',
-    description: '',
+    name: existingService?.name ?? '',
+    category: existingService?.category ?? '',
+    duration: existingService?.duration ?? 60,
+    price: existingService ? String(existingService.price) : '',
+    description: existingService?.description ?? '',
   })
 
   const set =
@@ -50,7 +57,11 @@ export function CreateService() {
 
   return (
     <div className="min-h-screen bg-white">
-      <TopBar title="Nuevo servicio" back light />
+      <TopBar
+        title={isEditing ? 'Editar servicio' : 'Nuevo servicio'}
+        back
+        light
+      />
 
       <div className="px-5 py-5 flex flex-col gap-5">
         {/* Basic info */}
@@ -147,7 +158,7 @@ export function CreateService() {
           disabled={!isValid}
           onClick={handleSave}
         >
-          Guardar servicio
+          {isEditing ? 'Guardar cambios' : 'Guardar servicio'}
         </Button>
         <Button variant="ghost" fullWidth onClick={() => navigate(-1)}>
           Cancelar

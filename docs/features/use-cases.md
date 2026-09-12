@@ -66,7 +66,7 @@ Not yet implemented: customer-facing screens (company/service search, available 
 ## 1. Onboarding
 
 - UC-001: User Registration → `/register` → API UC-01 (`POST /api/v1/accounts/register`) — form now uses `react-hook-form` + `zod` validation ([useRegisterForm.ts](../../src/features/auth/hooks/useRegisterForm.ts), [register.schema.ts](../../src/features/auth/schemas/register.schema.ts)); on success navigates directly to `/provider/onboarding`
-- UC-002: User Login → `/login` → API UC-02 (`POST /api/v1/accounts/login`) — on success navigates directly to `/provider` (does not pass through Role Switch)
+- UC-002: User Login → `/login` → API UC-02 (`POST /api/v1/accounts/login`) — on success navigates directly to `/provider`
 - UC-003: Google Login → API UC-03 (`POST /api/v1/accounts/google-login`) — [NOT IMPLEMENTED] add if providing social auth
 - UC-004: Password Recovery → `/forgot-password` → API UC-04 / UC-05 (`POST /api/v1/accounts/forgot-password`, `POST /api/v1/accounts/reset-password`)
 - UC-005: Generic Onboarding (intro/carousel) → `/onboarding`

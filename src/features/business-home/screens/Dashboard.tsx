@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
-import { Bell, Calendar } from 'lucide-react'
+import { Bell, Calendar, ChevronRight } from 'lucide-react'
 import { useApp } from '../../../app/providers/AppContext'
-import { PROVIDER_APPOINTMENTS } from '../../../app/data/mockData'
+import { COMPANIES, PROVIDER_APPOINTMENTS } from '../../../app/data/mockData'
 import { StatusBadge } from '../../../shared/components/ui/Badge'
 import { SkeletonList } from '../../../shared/components/ui/Skeleton'
+
+// Mock: provider owns first 2 companies, consistent with ProviderCompanies
+const MY_COMPANIES = COMPANIES.slice(0, 2)
 
 export function ProviderDashboard() {
   const navigate = useNavigate()
@@ -60,6 +63,41 @@ export function ProviderDashboard() {
       </div>
 
       <div className="px-5 py-6">
+        {/* Businesses overview */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-[#2C2C2C] font-medium">Tus negocios</h2>
+            <button
+              onClick={() => navigate('/provider/companies')}
+              className="text-sm text-[#6B7280] hover:text-[#2C2C2C] transition-colors"
+            >
+              Ver todos
+            </button>
+          </div>
+          <div className="space-y-3">
+            {MY_COMPANIES.map((company) => (
+              <div
+                key={company.id}
+                onClick={() => navigate(`/provider/companies/${company.id}`)}
+                className="flex items-center gap-3 p-3 bg-white border border-[#E5E7EB] rounded-2xl hover:border-[#D1D5DB] hover:shadow-sm transition-all cursor-pointer"
+              >
+                <img
+                  src={company.image}
+                  alt={company.name}
+                  className="w-12 h-12 rounded-xl object-cover shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-[#2C2C2C] truncate">
+                    {company.name}
+                  </p>
+                  <p className="text-xs text-[#9CA3AF]">{company.category}</p>
+                </div>
+                <ChevronRight size={16} className="text-[#9CA3AF] shrink-0" />
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Upcoming appointments */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">

@@ -45,7 +45,10 @@ export function ProviderCompanies() {
                 key={company.id}
                 className="bg-[#FAFAFA] rounded-2xl overflow-hidden border border-[#F0F0F0]"
               >
-                <div className="relative">
+                <div
+                  className="relative cursor-pointer"
+                  onClick={() => navigate(`/provider/companies/${company.id}`)}
+                >
                   <img
                     src={company.image}
                     alt={company.name}
@@ -58,9 +61,10 @@ export function ProviderCompanies() {
                       </div>
                     )}
                     <button
-                      onClick={() =>
+                      onClick={(e) => {
+                        e.stopPropagation()
                         navigate(`/provider/companies/${company.id}/edit`)
-                      }
+                      }}
                       className="w-8 h-8 bg-white rounded-full flex items-center justify-center"
                     >
                       <Settings size={14} className="text-[#2C2C2C]" />

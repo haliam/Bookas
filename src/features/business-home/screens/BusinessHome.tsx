@@ -1,38 +1,40 @@
-import { COMPANIES, PROVIDER_STATS } from '../../../app/data/mockData'
-import { BusinessHeader } from '../components/BusinessHeader'
+import { useParams } from 'react-router'
+import { COMPANIES } from '../../../app/data/mockData'
+import { TopBar } from '../../../shared/components/navigation/TopBar'
 import { TodaySummary } from '../components/TodaySummary'
 import { PendingActions } from '../components/PendingActions'
 import { BusinessNavigation } from '../components/BusinessNavigation'
 import { WeeklySummary } from '../components/WeeklySummary'
 import { useBusinessHomeSummary } from '../hooks/useBusinessHomeSummary'
 
-// Mock: provider's primary business, consistent with ProviderCompanies (first company)
-const PRIMARY_BUSINESS = COMPANIES[0]
-
 export function BusinessHome() {
+  const { id } = useParams<{ id: string }>()
+  // Fallback keeps the screen usable if an unknown id slips through until real API-backed lookups exist
+  const company = COMPANIES.find((c) => c.id === id) ?? COMPANIES[0]
+
   const {
     todayReservationsCount,
     pendingTodayCount,
     pendingCount,
     pendingDetailPath,
     weekReservationsCount,
-  } = useBusinessHomeSummary()
+  } = useBusinessHomeSummary(company.id)
 
   return (
     <div className="min-h-screen bg-white max-w-[480px] mx-auto">
-      <BusinessHeader businessName={PRIMARY_BUSINESS.name} />
+      <TopBar back="/provider" title={company.name} light />
       <TodaySummary
         reservationsCount={todayReservationsCount}
         pendingCount={pendingTodayCount}
       />
       <PendingActions count={pendingCount} detailPath={pendingDetailPath} />
       <BusinessNavigation
-        servicesPath={`/provider/companies/${PRIMARY_BUSINESS.id}/services`}
+        servicesPath={`/provider/companies/${company.id}/services`}
       />
       <WeeklySummary
         reservationsCount={weekReservationsCount}
-        rating={PROVIDER_STATS.rating}
-        reviewCount={PRIMARY_BUSINESS.reviewCount}
+        rating={company.rating}
+        reviewCount={company.reviewCount}
       />
     </div>
   )

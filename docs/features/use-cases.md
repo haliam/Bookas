@@ -41,7 +41,8 @@ Provider (wrapped in [ProviderLayout.tsx](../../src/app/layouts/ProviderLayout.t
 
 | Screen                | Route                                     | Component                                                                                              |
 | --------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Business Home         | `/provider`                               | [BusinessHome.tsx](../../src/features/business-home/screens/BusinessHome.tsx)                          |
+| Dashboard             | `/provider`                               | [Dashboard.tsx](../../src/features/business-home/screens/Dashboard.tsx)                                |
+| Business Home         | `/provider/companies/:id`                 | [BusinessHome.tsx](../../src/features/business-home/screens/BusinessHome.tsx)                          |
 | Companies             | `/provider/companies`                     | [Companies.tsx](../../src/features/companies/screens/Companies.tsx)                                    |
 | Create Company        | `/provider/companies/create`              | [CreateCompany.tsx](../../src/features/companies/screens/CreateCompany.tsx)                            |
 | Edit Company          | `/provider/companies/:id/edit`            | [CreateCompany.tsx](../../src/features/companies/screens/CreateCompany.tsx)                            |
@@ -59,7 +60,7 @@ Provider (wrapped in [ProviderLayout.tsx](../../src/app/layouts/ProviderLayout.t
 | Reports               | `/provider/reports`                       | [Reports.tsx](../../src/features/reports/screens/Reports.tsx)                                          |
 | Reviews (placeholder) | `/provider/reviews`                       | [Reports.tsx](../../src/features/reports/screens/Reports.tsx)                                          |
 
-Unrouted component found in the repo: [Dashboard.tsx](../../src/features/business-home/screens/Dashboard.tsx) (exports `ProviderDashboard`) exists but is not wired into any `*-routes.tsx` file and is not imported anywhere else — likely in-progress or leftover code, not a real screen. Flagged for follow-up rather than assumed complete.
+`Dashboard.tsx` (`ProviderDashboard`) was previously unrouted; it is now the `/provider` index screen (2026-09-12), showing a provider-wide overview across all of that provider's businesses. `BusinessHome.tsx` was repurposed from a single hardcoded business into a per-business detail screen, addressed by `:id` and reached from the Dashboard's "Tus negocios" list or from the Companies list.
 
 Not yet implemented: customer-facing screens (company/service search, available slots, booking, my appointments, payments).
 
@@ -72,6 +73,8 @@ Not yet implemented: customer-facing screens (company/service search, available 
 - UC-005: Generic Onboarding (intro/carousel) → `/onboarding`
 - UC-005c: Provider Onboarding (minimum info) → `/provider/onboarding`, uses `Create Company` + `Add Service` flows (see below)
 - UC-005d: Offline state screen → `/offline`
+- UC-005e: Provider Dashboard (overview across all of the provider's businesses) → `/provider`
+- UC-005f: Business Home (detail for a single business — today's/weekly stats, quick nav) → `/provider/companies/:id`
 
 ## 2. Profile
 
@@ -174,41 +177,43 @@ flowchart TD
     Landing["/ (Landing)"] --> Login["/login"]
     Landing --> Register["/register"]
     Login --> Forgot["/forgot-password"]
-    Login -->|auth success| Home["/provider (BusinessHome)"]
+    Login -->|auth success| Dashboard["/provider (Dashboard)"]
     Register -->|auth success| ProvOnboarding["/provider/onboarding"]
     ProvOnboarding --> CreateCompany["/provider/companies/create"]
 
     subgraph ProviderLayout["Provider (bottom nav)"]
-        Home
+        Dashboard
         Calendar["/provider/calendar"]
         Appointments["/provider/appointments"]
         Profile["/provider/profile"]
     end
 
-    CreateCompany --> Home
+    CreateCompany --> Dashboard
 
-    Home --> Companies["/provider/companies"]
-    Home --> Clients["/provider/clients (placeholder)"]
-    Home --> Services["/provider/companies/:id/services"]
-    Home --> Reviews["/provider/reviews (placeholder)"]
-    Home --> Notifications["/provider/notifications"]
-    Home --> Reports["/provider/reports"]
-    Home --> Settings["/provider/settings"]
+    Dashboard -->|"tap a business"| BusinessHome["/provider/companies/:id (BusinessHome)"]
+    Dashboard -->|"ver todos"| Companies["/provider/companies"]
+    Dashboard -->|"bell icon"| Notifications["/provider/notifications"]
+    Dashboard -->|"tap an appointment"| ApptDetail["/provider/appointments/:id"]
 
+    Companies -->|"tap a business card"| BusinessHome
     Companies --> CreateCompany
     Companies --> EditCompany["/provider/companies/:id/edit"]
-    Companies --> Services
+
+    BusinessHome --> Calendar
+    BusinessHome --> Clients["/provider/clients (placeholder)"]
+    BusinessHome --> Services["/provider/companies/:id/services"]
+    BusinessHome --> Reviews["/provider/reviews (placeholder)"]
 
     Services --> CreateService["/provider/companies/:id/services/create"]
 
     Calendar --> Hours["/provider/hours"]
     Calendar --> BlockTime["/provider/block-time"]
 
-    Appointments --> ApptDetail["/provider/appointments/:id"]
+    Appointments --> ApptDetail
     ApptDetail -->|update status| Appointments
 
-    Profile --> Settings
-    Profile --> Reports
+    Profile --> Settings["/provider/settings"]
+    Profile --> Reports["/provider/reports"]
 
     Offline["/offline"] -.->|connectivity lost, any screen| Offline
 ```
@@ -218,6 +223,7 @@ Notes:
 - Customer-facing booking screens (search company, view slots, book/cancel appointment) do not exist yet; the diagram only covers public auth and provider screens.
 - `clients` and `reviews` routes are placeholders that currently render the Companies and Reports screens respectively.
 - The previously orphaned `/role-switch` screen and route have been removed from the codebase (2026-09-12) since nothing navigated to it.
+- `/provider` (Dashboard) and `/provider/companies/:id` (BusinessHome) were split on 2026-09-12: Dashboard is a provider-wide overview across all businesses, BusinessHome is the detail view for one specific business.
 
 ---
 
@@ -235,7 +241,7 @@ flowchart TD
     Register -->|"submits valid form"| ProvOnboard["Provider Onboarding\n(UC-005c)"]
     Register -->|"validation error"| Register
 
-    Login -->|"correct credentials"| Home
+    Login -->|"correct credentials"| Dashboard
     Login -->|"wrong credentials — error, retry"| Login
     Login -->|"forgot password?"| Forgot["Forgot Password\n(UC-004)"]
     Forgot -->|"reset link sent"| Login
@@ -251,32 +257,35 @@ flowchart TD
 
     subgraph Auth["Authenticated — Provider role"]
         ProvOnboard -->|"add first company"| CreateCompany["Create Company\n(UC-008)"]
-        CreateCompany -->|"saved"| Home["Business Home\n(UC-030 overview)"]
+        CreateCompany -->|"saved"| Dashboard["Dashboard\n(UC-005e, overview of all businesses)"]
 
-        Home -->|"manage companies"| Companies["Companies list\n(UC-009)"]
+        Dashboard -->|"tap a business"| BusinessHome["Business Home\n(UC-005f, one business)"]
+        Dashboard -->|"ver todos"| Companies["Companies list\n(UC-009)"]
+        Companies -->|"tap a business card"| BusinessHome
         Companies -->|"add another"| CreateCompany
         Companies -->|"edit"| EditCompany["Edit Company\n(UC-010)"]
-        Companies -->|"open a company's services"| Services["Services list\n(UC-013)"]
+
+        BusinessHome -->|"open services"| Services["Services list\n(UC-013)"]
         Services -->|"add a service"| CreateService["Create Service\n(UC-014)"]
 
-        Home -->|"check schedule"| Calendar["Calendar\n(UC-017)"]
+        BusinessHome -->|"check schedule"| Calendar["Calendar\n(UC-017)"]
         Calendar -->|"set availability"| Hours["Working Hours\n(UC-018)"]
         Calendar -->|"block time off"| BlockTime["Block Time\n(UC-019/020)"]
 
-        Home -->|"view bookings"| Appointments["Appointments list\n(UC-030)"]
+        Dashboard -->|"view bookings"| Appointments["Appointments list\n(UC-030)"]
         Appointments -->|"open one"| ApptDetail["Appointment Detail\n(UC-030b)"]
         ApptDetail -->|"accept / confirm / reject"| Decision{"Decision:\naccept or reject?"}
         Decision -->|"accept"| Appointments
         Decision -->|"reject"| Appointments
 
-        Home -->|"check alerts"| Notifications["Notifications\n(UC-037)"]
-        Home -->|"view performance"| Reports["Reports\n(UC-040/041)"]
-        Home -->|"manage account"| Profile["Profile\n(UC-006/007)"]
+        Dashboard -->|"check alerts"| Notifications["Notifications\n(UC-037)"]
+        Dashboard -->|"manage account"| Profile["Profile\n(UC-006/007)"]
+        Profile -->|"view performance"| Reports["Reports\n(UC-040/041)"]
         Profile -->|"app preferences"| Settings["Settings\n(UC-038/039)"]
     end
 
-    Home -.->|"connection lost, any screen"| Offline["Offline screen\n(UC-005d)"]
-    Offline -.->|"connection restored"| Home
+    Dashboard -.->|"connection lost, any screen"| Offline["Offline screen\n(UC-005d)"]
+    Offline -.->|"connection restored"| Dashboard
 
     %% ---- Customer journey: intent only, not implemented ----
     subgraph Customer["Customer role — NOT IMPLEMENTED, shown as intended flow only"]
@@ -319,9 +328,10 @@ Walking `Use Case → Required Screen(s) → User Action → Navigation → Next
 | Use case                                                   | Screen(s)                      | Consistent with navigation flow?                                                                                                                    |
 | ---------------------------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | UC-001 Register                                            | Register                       | ✅ Yes — leads to UC-005c                                                                                                                           |
-| UC-002 Login                                               | Login                          | ✅ Yes — leads to UC-030 (Home)                                                                                                                     |
+| UC-002 Login                                               | Login                          | ✅ Yes — leads to UC-005e (Dashboard)                                                                                                               |
 | UC-004 Password Recovery                                   | Forgot Password                | ✅ Yes — loops back to Login                                                                                                                        |
 | UC-005c Provider Onboarding                                | Provider Onboarding            | ✅ Yes — leads to UC-008                                                                                                                            |
+| UC-005e/005f Dashboard / Business Home                     | Dashboard / Business Home      | ✅ Yes — Dashboard lists businesses, each leads into its own Business Home                                                                          |
 | UC-008/009/010 Company management                          | Create/List/Edit Company       | ✅ Yes                                                                                                                                              |
 | UC-013/014 Services                                        | Services list / Create Service | ✅ Yes                                                                                                                                              |
 | UC-015/016 Edit/Delete Service                             | —                              | ⚠️ **Partial** — use case is documented, no screen exists, so it cannot appear in the navigation flow                                               |
@@ -331,7 +341,6 @@ Walking `Use Case → Required Screen(s) → User Action → Navigation → Next
 | UC-038/039 Settings                                        | Settings                       | ✅ Yes                                                                                                                                              |
 | UC-040/041 Reports                                         | Reports                        | ✅ Yes                                                                                                                                              |
 | UC-012, UC-021–UC-029, UC-032–UC-036 (customer + payments) | none                           | ⚠️ **Pending** — consistently marked `[NOT IMPLEMENTED]` across use-cases.md, screens.md and this diagram (dashed) — no inconsistency, just unbuilt |
-| `Dashboard.tsx` (`ProviderDashboard`)                      | exists, unrouted               | ❌ **No matching use case or navigation step** — flagged in screens.md; not shown in this diagram because it isn't reachable                        |
-| `Clients` / `Reviews` placeholder routes                   | render Companies / Reports     | ⚠️ **Partial** — reachable in navigation (via Home) but have no dedicated use case of their own                                                     |
+| `Clients` / `Reviews` placeholder routes                   | render Companies / Reports     | ⚠️ **Partial** — reachable in navigation (via Business Home) but have no dedicated use case of their own                                            |
 
-**Overall**: the three artifacts are consistent for everything that is actually built — every implemented screen maps to a use case and a reachable navigation step, and every pending use case is consistently marked as not implemented in all three places. The remaining exceptions are `Dashboard.tsx` (no use case, no route) and `Clients`/`Reviews` (reachable but use-case-less placeholders). `/role-switch` was removed on 2026-09-12 since it was unreachable and had no clear owner.
+**Overall**: the three artifacts are consistent for everything that is actually built — every implemented screen maps to a use case and a reachable navigation step, and every pending use case is consistently marked as not implemented in all three places. `Dashboard.tsx` was resolved on 2026-09-12: it's now the `/provider` index (UC-005e), and `BusinessHome.tsx` was repurposed into the per-business detail screen (UC-005f) instead of hardcoding a single company. The remaining exception is `Clients`/`Reviews` (reachable but use-case-less placeholders). `/role-switch` was removed on 2026-09-12 since it was unreachable and had no clear owner.

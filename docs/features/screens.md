@@ -13,13 +13,14 @@ Verified against the actual routes registered in [routes.tsx](../../src/app/rout
 ## ✅ Completed
 
 - [x] **Landing** — `/` — Related: UC-005 — Entry point / marketing splash — Action: go to Login or Register
-- [x] **Login** — `/login` — Related: UC-002 — Authenticate an existing user — Action: submit credentials → lands on Business Home
+- [x] **Login** — `/login` — Related: UC-002 — Authenticate an existing user — Action: submit credentials → lands on Dashboard
 - [x] **Register** — `/register` — Related: UC-001 — Create a new account (react-hook-form + zod validation) — Action: submit form → lands on Provider Onboarding
 - [x] **Forgot Password** — `/forgot-password` — Related: UC-004 — Request/perform password reset — Action: submit email
 - [x] **Onboarding** — `/onboarding` — Related: UC-005 — Generic intro/carousel — Action: continue
 - [x] **Provider Onboarding** — `/provider/onboarding` — Related: UC-005c — Minimal setup guiding a new provider to create a company — Action: continue to Create Company
 - [x] **Offline** — `/offline` — Related: UC-005d — Shown when connectivity is lost — Action: retry
-- [x] **Business Home** — `/provider` — Related: UC-006 (indirect), UC-030 — Provider's dashboard/landing after login — Action: navigate to companies, appointments, etc.
+- [x] **Dashboard** — `/provider` — Related: UC-005e — Provider's landing screen after login: overview across all of their businesses, today's appointments, notifications — Action: pick a business, open an appointment, or go to Companies
+- [x] **Business Home** — `/provider/companies/:id` — Related: UC-005f — Detail view for one specific business (today's/weekly stats, quick nav to Calendar/Services/Clients/Reviews) — Action: navigate into that business's Calendar, Services, Clients, or Reviews
 - [x] **Companies (list)** — `/provider/companies` — Related: UC-009 — View all companies owned by the provider — Action: create/edit a company
 - [x] **Create Company** — `/provider/companies/create` — Related: UC-008 — Create a new company — Action: submit company details
 - [x] **Edit Company** — `/provider/companies/:id/edit` — Related: UC-010 — Edit an existing company (reuses Create Company screen) — Action: submit changes
@@ -37,7 +38,6 @@ Verified against the actual routes registered in [routes.tsx](../../src/app/rout
 
 ## ⚠️ Partially completed
 
-- [ ] **Provider Dashboard** — no route — Related: UC-040 (candidate) — `Dashboard.tsx` (`ProviderDashboard`) exists in `src/features/business-home/screens/` but is not registered in any `*-routes.tsx` and isn't imported elsewhere. Unclear if it's meant to replace Business Home or is leftover code — needs confirmation.
 - [ ] **Clients** — `/provider/clients` — Related: (no dedicated UC yet) — Placeholder route currently renders the Companies screen; no real Clients screen exists.
 - [ ] **Reviews** — `/provider/reviews` — Related: (no dedicated UC yet) — Placeholder route currently renders the Reports screen; no real Reviews screen exists.
 
@@ -63,8 +63,8 @@ Verified against the actual routes registered in [routes.tsx](../../src/app/rout
 
 | Status                 | Count |
 | ---------------------- | ----- |
-| ✅ Completed           | 20    |
-| ⚠️ Partially completed | 3     |
+| ✅ Completed           | 21    |
+| ⚠️ Partially completed | 2     |
 | ⬜ Pending             | 15    |
 
 ## Consistency check: Use Cases ↔ Screens ↔ Navigation
@@ -72,5 +72,5 @@ Verified against the actual routes registered in [routes.tsx](../../src/app/rout
 - Every screen listed as "Completed" above has a matching entry and route in [use-cases.md](./use-cases.md) and appears in that document's navigation diagram — no orphaned "completed" screens found.
 - The previously orphaned Role Switch Landing screen/route (UC-005b) was removed from the codebase on 2026-09-12, since nothing navigated to it and it had no clear owner.
 - Every "Pending" item corresponds to a `[NOT IMPLEMENTED]` use case in use-cases.md — no pending screens were invented without a backing use case.
-- `Dashboard.tsx` is the one asset that exists in the repo with **no** corresponding use case, route, or navigation link. It should either be wired up against a specific use case (e.g., replacing or complementing Business Home for UC-040 analytics) or removed if abandoned.
+- `Dashboard.tsx` was resolved on 2026-09-12: it is now the `/provider` index screen (UC-005e), and `BusinessHome.tsx` was repurposed from a single hardcoded company into the per-business detail screen at `/provider/companies/:id` (UC-005f).
 - The `Clients` and `Reviews` placeholder routes have no dedicated use cases yet; if real Clients/Reviews features are planned, add use cases for them before building dedicated screens.

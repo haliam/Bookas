@@ -40,7 +40,7 @@ src/
 │   └── layouts/
 │       └── ProviderLayout.tsx
 ├── features/
-│   ├── auth/                      # Login, Register, ForgotPassword, RoleSwitchLanding
+│   ├── auth/                      # Login, Register, ForgotPassword
 │   ├── onboarding/                # Onboarding, ProviderOnboarding, Offline
 │   ├── business-home/             # already close to this shape today
 │   │   ├── screens/BusinessHome.tsx

@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from 'react-router'
 import { Plus, Clock, Edit2, Trash2, MoreVertical } from 'lucide-react'
 import { COMPANIES, SERVICES } from '../../../app/data/mockData'
+import type { Service } from '../../../app/data/model/service.types'
 import { TopBar } from '../../../shared/components/navigation/TopBar'
 import { Button } from '../../../shared/components/ui/Button'
 import { EmptyState } from '../../../shared/components/ui/EmptyState'
@@ -10,9 +11,18 @@ export function ProviderServices() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<Service | null>(null)
 
   const company = COMPANIES.find((c) => c.id === id) || COMPANIES[0]
-  const services = SERVICES.filter((s) => s.companyId === (id || 'c1'))
+  const [services, setServices] = useState(() =>
+    SERVICES.filter((s) => s.companyId === (id || 'c1')),
+  )
+
+  const handleConfirmDelete = () => {
+    if (!deleteTarget) return
+    setServices((prev) => prev.filter((s) => s.id !== deleteTarget.id))
+    setDeleteTarget(null)
+  }
 
   const groupedByCategory = services.reduce(
     (acc, s) => {
@@ -149,6 +159,9 @@ export function ProviderServices() {
                                     className="w-full flex items-center gap-2 px-4 py-3 text-sm text-[#2C2C2C] hover:bg-[#FAFAFA]"
                                     onClick={() => {
                                       setActiveMenu(null)
+                                      navigate(
+                                        `/provider/companies/${id}/services/${service.id}/edit`,
+                                      )
                                     }}
                                   >
                                     <Edit2 size={14} /> Editar
@@ -157,6 +170,7 @@ export function ProviderServices() {
                                     className="w-full flex items-center gap-2 px-4 py-3 text-sm text-[#E94C59] hover:bg-[#FEF2F2] border-t border-[#F0F0F0]"
                                     onClick={() => {
                                       setActiveMenu(null)
+                                      setDeleteTarget(service)
                                     }}
                                   >
                                     <Trash2 size={14} /> Eliminar
@@ -185,6 +199,36 @@ export function ProviderServices() {
           </>
         )}
       </div>
+
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center">
+          <div className="w-full max-w-[400px] bg-white rounded-t-3xl sm:rounded-3xl p-6">
+            <h3 className="text-[#111827] font-semibold mb-2">
+              ¿Eliminar servicio?
+            </h3>
+            <p className="text-sm text-[#6B7280] mb-6">
+              Esta acción eliminará <strong>{deleteTarget.name}</strong>. Los
+              clientes ya no podrán reservarlo.
+            </p>
+            <div className="flex flex-col gap-2">
+              <Button
+                fullWidth
+                variant="destructive"
+                onClick={handleConfirmDelete}
+              >
+                Eliminar
+              </Button>
+              <Button
+                variant="ghost"
+                fullWidth
+                onClick={() => setDeleteTarget(null)}
+              >
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

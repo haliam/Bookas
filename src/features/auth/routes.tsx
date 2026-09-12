@@ -11,15 +11,9 @@ const Login = lazy(() =>
 const Register = lazy(() =>
   import('./screens/Register').then((m) => ({ default: m.Register })),
 )
-const RoleSwitchLanding = lazy(() =>
-  import('./screens/RoleSwitchLanding').then((m) => ({
-    default: m.RoleSwitchLanding,
-  })),
-)
 
 export const authRoutes: RouteObject[] = [
   { path: '/login', Component: Login },
   { path: '/register', Component: Register },
   { path: '/forgot-password', Component: ForgotPassword },
-  { path: '/role-switch', Component: RoleSwitchLanding },
 ]

@@ -58,12 +58,12 @@ Wrap `/provider/*` routes so unauthenticated users are redirected to `/login`.
 
 _Wire existing Login/Register/ForgotPassword UI to real API. Zero design changes._
 
-| Step | File                 | Change                                                                |
-| ---- | -------------------- | --------------------------------------------------------------------- |
-| 2.1  | `Login.tsx`          | Call `auth.login()`, store tokens, navigate to `/provider`            |
-| 2.2  | `Register.tsx`       | Call `auth.register()`, on success navigate to `/onboarding-provider` |
-| 2.3  | `ForgotPassword.tsx` | Call `auth.forgotPassword()`, show success message                    |
-| 2.4  | `routes.tsx`         | Remove `Onboarding` and `RoleSwitchLanding` routes                    |
+| Step | File                 | Change                                                                   |
+| ---- | -------------------- | ------------------------------------------------------------------------ |
+| 2.1  | `Login.tsx`          | Call `auth.login()`, store tokens, navigate to `/provider`               |
+| 2.2  | `Register.tsx`       | Call `auth.register()`, on success navigate to `/onboarding-provider`    |
+| 2.3  | `ForgotPassword.tsx` | Call `auth.forgotPassword()`, show success message                       |
+| 2.4  | `routes.tsx`         | Remove `Onboarding` route (`RoleSwitchLanding` route removed 2026-09-12) |
 
 ---
 

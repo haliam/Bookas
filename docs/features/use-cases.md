@@ -31,12 +31,11 @@ Public:
 
 Extra:
 
-| Screen              | Route                  | Component                                                                              | Notes                                                                                                                                             |
-| ------------------- | ---------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Onboarding          | `/onboarding`          | [Onboarding.tsx](../../src/features/onboarding/screens/Onboarding.tsx)                 |                                                                                                                                                   |
-| Provider Onboarding | `/provider/onboarding` | [ProviderOnboarding.tsx](../../src/features/onboarding/screens/ProviderOnboarding.tsx) | Route path changed from the previous `/onboarding-provider`                                                                                       |
-| Role Switch Landing | `/role-switch`         | [RoleSwitchLanding.tsx](../../src/features/auth/screens/RoleSwitchLanding.tsx)         | **Orphaned:** routed but nothing currently navigates to it — Login goes straight to `/provider`, Register goes straight to `/provider/onboarding` |
-| Offline             | `/offline`             | [Offline.tsx](../../src/features/onboarding/screens/Offline.tsx)                       |                                                                                                                                                   |
+| Screen              | Route                  | Component                                                                              | Notes                                                       |
+| ------------------- | ---------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Onboarding          | `/onboarding`          | [Onboarding.tsx](../../src/features/onboarding/screens/Onboarding.tsx)                 |                                                             |
+| Provider Onboarding | `/provider/onboarding` | [ProviderOnboarding.tsx](../../src/features/onboarding/screens/ProviderOnboarding.tsx) | Route path changed from the previous `/onboarding-provider` |
+| Offline             | `/offline`             | [Offline.tsx](../../src/features/onboarding/screens/Offline.tsx)                       |                                                             |
 
 Provider (wrapped in [ProviderLayout.tsx](../../src/app/layouts/ProviderLayout.tsx)):
 
@@ -71,7 +70,6 @@ Not yet implemented: customer-facing screens (company/service search, available 
 - UC-003: Google Login → API UC-03 (`POST /api/v1/accounts/google-login`) — [NOT IMPLEMENTED] add if providing social auth
 - UC-004: Password Recovery → `/forgot-password` → API UC-04 / UC-05 (`POST /api/v1/accounts/forgot-password`, `POST /api/v1/accounts/reset-password`)
 - UC-005: Generic Onboarding (intro/carousel) → `/onboarding`
-- UC-005b: Role Switch Landing → `/role-switch` — **[ORPHANED]** screen and route exist but no current flow links to it; either wire it into the Login/Register flow or remove it
 - UC-005c: Provider Onboarding (minimum info) → `/provider/onboarding`, uses `Create Company` + `Add Service` flows (see below)
 - UC-005d: Offline state screen → `/offline`
 
@@ -180,8 +178,6 @@ flowchart TD
     Register -->|auth success| ProvOnboarding["/provider/onboarding"]
     ProvOnboarding --> CreateCompany["/provider/companies/create"]
 
-    RoleSwitch["/role-switch (orphaned — unreachable from Login/Register)"]
-
     subgraph ProviderLayout["Provider (bottom nav)"]
         Home
         Calendar["/provider/calendar"]
@@ -215,15 +211,13 @@ flowchart TD
     Profile --> Reports
 
     Offline["/offline"] -.->|connectivity lost, any screen| Offline
-
-    style RoleSwitch stroke-dasharray: 5 5
 ```
 
 Notes:
 
 - Customer-facing booking screens (search company, view slots, book/cancel appointment) do not exist yet; the diagram only covers public auth and provider screens.
 - `clients` and `reviews` routes are placeholders that currently render the Companies and Reports screens respectively.
-- `/role-switch` is drawn detached (dashed) because no screen currently links to it — Login and Register both bypass it.
+- The previously orphaned `/role-switch` screen and route have been removed from the codebase (2026-09-12) since nothing navigated to it.
 
 ---
 
@@ -245,6 +239,7 @@ flowchart TD
     Login -->|"wrong credentials — error, retry"| Login
     Login -->|"forgot password?"| Forgot["Forgot Password\n(UC-004)"]
     Forgot -->|"reset link sent"| Login
+
 
     %% ---- Authentication boundary ----
     subgraph Public["Public (unauthenticated)"]
@@ -326,7 +321,6 @@ Walking `Use Case → Required Screen(s) → User Action → Navigation → Next
 | UC-001 Register                                            | Register                       | ✅ Yes — leads to UC-005c                                                                                                                           |
 | UC-002 Login                                               | Login                          | ✅ Yes — leads to UC-030 (Home)                                                                                                                     |
 | UC-004 Password Recovery                                   | Forgot Password                | ✅ Yes — loops back to Login                                                                                                                        |
-| UC-005b Role Switch Landing                                | Role Switch Landing            | ❌ **No** — screen and route exist, but no navigation call leads to it; it satisfies no reachable step in the journey                               |
 | UC-005c Provider Onboarding                                | Provider Onboarding            | ✅ Yes — leads to UC-008                                                                                                                            |
 | UC-008/009/010 Company management                          | Create/List/Edit Company       | ✅ Yes                                                                                                                                              |
 | UC-013/014 Services                                        | Services list / Create Service | ✅ Yes                                                                                                                                              |
@@ -340,4 +334,4 @@ Walking `Use Case → Required Screen(s) → User Action → Navigation → Next
 | `Dashboard.tsx` (`ProviderDashboard`)                      | exists, unrouted               | ❌ **No matching use case or navigation step** — flagged in screens.md; not shown in this diagram because it isn't reachable                        |
 | `Clients` / `Reviews` placeholder routes                   | render Companies / Reports     | ⚠️ **Partial** — reachable in navigation (via Home) but have no dedicated use case of their own                                                     |
 
-**Overall**: the three artifacts are consistent for everything that is actually built — every implemented screen maps to a use case and a reachable navigation step, and every pending use case is consistently marked as not implemented in all three places. The exceptions are the ones already called out: `/role-switch` (unreachable), `Dashboard.tsx` (no use case, no route), and `Clients`/`Reviews` (reachable but use-case-less placeholders).
+**Overall**: the three artifacts are consistent for everything that is actually built — every implemented screen maps to a use case and a reachable navigation step, and every pending use case is consistently marked as not implemented in all three places. The remaining exceptions are `Dashboard.tsx` (no use case, no route) and `Clients`/`Reviews` (reachable but use-case-less placeholders). `/role-switch` was removed on 2026-09-12 since it was unreachable and had no clear owner.

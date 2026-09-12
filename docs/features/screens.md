@@ -37,7 +37,6 @@ Verified against the actual routes registered in [routes.tsx](../../src/app/rout
 
 ## ⚠️ Partially completed
 
-- [ ] **Role Switch Landing** — `/role-switch` — Related: UC-005b — Screen and route exist but are orphaned: neither Login nor Register navigates here, so it's unreachable in the current flow. Needs to be wired in or removed.
 - [ ] **Provider Dashboard** — no route — Related: UC-040 (candidate) — `Dashboard.tsx` (`ProviderDashboard`) exists in `src/features/business-home/screens/` but is not registered in any `*-routes.tsx` and isn't imported elsewhere. Unclear if it's meant to replace Business Home or is leftover code — needs confirmation.
 - [ ] **Clients** — `/provider/clients` — Related: (no dedicated UC yet) — Placeholder route currently renders the Companies screen; no real Clients screen exists.
 - [ ] **Reviews** — `/provider/reviews` — Related: (no dedicated UC yet) — Placeholder route currently renders the Reports screen; no real Reviews screen exists.
@@ -65,12 +64,13 @@ Verified against the actual routes registered in [routes.tsx](../../src/app/rout
 | Status                 | Count |
 | ---------------------- | ----- |
 | ✅ Completed           | 20    |
-| ⚠️ Partially completed | 4     |
+| ⚠️ Partially completed | 3     |
 | ⬜ Pending             | 15    |
 
 ## Consistency check: Use Cases ↔ Screens ↔ Navigation
 
-- Every screen listed as "Completed" above has a matching entry and route in [use-cases.md](./use-cases.md) and appears in that document's navigation diagram — no orphaned "completed" screens found, **except** Role Switch Landing, which is routed and documented but not reachable from any actual navigation call (flagged in both documents).
+- Every screen listed as "Completed" above has a matching entry and route in [use-cases.md](./use-cases.md) and appears in that document's navigation diagram — no orphaned "completed" screens found.
+- The previously orphaned Role Switch Landing screen/route (UC-005b) was removed from the codebase on 2026-09-12, since nothing navigated to it and it had no clear owner.
 - Every "Pending" item corresponds to a `[NOT IMPLEMENTED]` use case in use-cases.md — no pending screens were invented without a backing use case.
 - `Dashboard.tsx` is the one asset that exists in the repo with **no** corresponding use case, route, or navigation link. It should either be wired up against a specific use case (e.g., replacing or complementing Business Home for UC-040 analytics) or removed if abandoned.
 - The `Clients` and `Reviews` placeholder routes have no dedicated use cases yet; if real Clients/Reviews features are planned, add use cases for them before building dedicated screens.
